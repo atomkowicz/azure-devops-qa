@@ -15,7 +15,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Run inline script in Azure AzureCLI - create Azure storage account'
       inputs:
-        azureSubscription: '$(azuresubscription)'
+        azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
@@ -36,7 +36,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Run inline script in Azure AzureCLI - get storage account key'
       inputs:
-        azureSubscription: '$(azuresubscription)'
+        azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
