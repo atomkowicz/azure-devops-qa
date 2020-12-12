@@ -20,26 +20,26 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |
           #! /bin/bash
-          # Create resource group
-          az group create --location westeurope --name $(RESOURCE_GROUP_NAME)
-          # Create storage account
-          az storage account create --name $(STORAGE_ACCOUNT_NAME) --resource-group $(RESOURCE_GROUP_NAME) --location westeurope --sku Standard_LRS
-          # Create blob container
-          az storage container create --name terraform --account-name $(STORAGE_ACCOUNT_NAME)
+          az group create --name $(RESOURCE_GROUP_NAME) --location westeurope
+          az storage account create --resource-group $(RESOURCE_GROUP_NAME) --name $(STORAGE_ACCOUNT_NAME) --sku F1 --encryption-services blob
+          ACCOUNT_KEY=$(az storage account keys list --resource-group $(RESOURCE_GROUP_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --query '[0].value' -o tsv)
+          CONTAINER_NAME=$(RESOURCE_GROUP_NAME)
+          az storage container create --name $(CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(ACCOUNT_KEY)
           az storage account keys list -g $(RESOURCE_GROUP_NAME) -n $(STORAGE_ACCOUNT_NAME)
-  - job: getAzureStorageKey
-    displayName: 'Get storage account key'
-    dependsOn: createAzureStorageAccount
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: AzureCLI@2
-      displayName: 'Run inline script in Azure AzureCLI - get storage account key'
-      inputs:
-        azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          #! /bin/bash
-          ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
           echo "access_key: $(ACCOUNT_KEY)"
+  # - job: getAzureStorageKey
+  #   displayName: 'Get storage account key'
+  #   dependsOn: createAzureStorageAccount
+  #   pool:
+  #     vmImage: ubuntu-latest
+  #   steps:
+  #   - task: AzureCLI@2
+  #     displayName: 'Run inline script in Azure AzureCLI - get storage account key'
+  #     inputs:
+  #       azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
+  #       scriptType: bash
+  #       scriptLocation: inlineScript
+  #       inlineScript: |
+  #         #! /bin/bash
+  #         #ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
+  #         echo "access_key: $(ACCOUNT_KEY)"
