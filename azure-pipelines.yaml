@@ -13,7 +13,7 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: AzureCLI@2
-      displayName: 'Run inline script in Azure AzureCLI - create Azure storage account'
+      displayName: 'Create Azure storage account'
       inputs:
         azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
         scriptType: bash
@@ -22,12 +22,11 @@ stages:
           #! /bin/bash
           az group create --name $(RESOURCE_GROUP_NAME) --location westeurope
           az storage account create --resource-group $(RESOURCE_GROUP_NAME) --name $(STORAGE_ACCOUNT_NAME) --sku Standard_LRS --encryption-services blob
-          Write-Host "##vso[task.setvariable variable=minor]$day"
           $key=$(az storage account keys list --resource-group $(RESOURCE_GROUP_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --query '[0].value' -o tsv)
           Write-Host "##vso[task.setvariable variable=accountkey]$key"
           az storage container create --name $(CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(accountkey)
           az storage account keys list -g $(RESOURCE_GROUP_NAME) -n $(STORAGE_ACCOUNT_NAME)
-          echo "access_key: $(accountkey)"
+          echo "access_key: $(key)"
   # - job: getAzureStorageKey
   #   displayName: 'Get storage account key'
   #   dependsOn: createAzureStorageAccount
