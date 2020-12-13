@@ -16,13 +16,13 @@ stages:
       displayName: 'Create Azure storage account'
       inputs:
         azureSubscription: '$(AZURE_SUBSCIPTION_ID)'
-        scriptType: bash
+        scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
-          #! /bin/bash
           az group create --name $(RESOURCE_GROUP_NAME) --location westeurope
           az storage account create --resource-group $(RESOURCE_GROUP_NAME) --name $(STORAGE_ACCOUNT_NAME) --sku Standard_LRS --encryption-services blob
-          az storage container create --name $(CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(az storage account keys list --resource-group $(RESOURCE_GROUP_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --query '[0].value' -o tsv)
+          $key=(az storage account keys list --resource-group $(RESOURCE_GROUP_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --query '[0].value' -o tsv)
+          az storage container create --name $(CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(key)
           az storage account keys list -g $(RESOURCE_GROUP_NAME) -n $(STORAGE_ACCOUNT_NAME)
   # - job: getAzureStorageKey
   #   displayName: 'Get storage account key'
