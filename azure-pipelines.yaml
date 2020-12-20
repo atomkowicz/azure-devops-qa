@@ -22,7 +22,6 @@ stages:
           terraformVersion: '0.12.3'
       - script: 'pwd' 
         displayName: 'pwd'
-      - task: AzureCLI@2
       - script: 'cd terraform/environments/test && terraform init -backend-config "access_key=$(STORAGE_ACCESS_KEY)"'
         displayName: 'Initialize terraform'
     
