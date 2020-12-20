@@ -5,10 +5,10 @@ name: Azure Pipelines
 variables:
   python.version: '3.7.6'
 stages:
-- stage: Provisioning
+- stage: Build
   displayName: Provisioning
   jobs:
-  - job: Provisioning
+  - job: Build
     displayName: Terraform Provisioning
     steps:
       - task: InstallSSHKey@0
