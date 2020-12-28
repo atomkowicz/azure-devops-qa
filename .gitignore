@@ -1,1 +1,8 @@
 .DS_Store
+.env
+description
+temp
+scripts
+screenshots
+terraform/environments/test/.terraform
+terraform/environments/test/solution.plan
