@@ -20,11 +20,9 @@ stages:
         displayName: 'Install terraform'
         inputs:
           terraformVersion: '0.12.3'
-      - script: 'pwd' 
-        displayName: 'pwd'
       - script: 'cd terraform/environments/test && terraform init -backend-config "access_key=$(STORAGE_ACCESS_KEY)"'
         displayName: 'Terraform init'
-      - script: 'cd terraform/environments/test && terraform plan -var=subscription_id="$AZURE_SUBSCRIPTION_ID" -var=client_id="$CLIENT_ID" -var=client_secret="$CLIENT_SECRET" -var=tenant_id="$TENANT_ID" -var=location="$REGION" -var=resource_group="$RESOURCE_GROUP_NAME"'
+      - script: 'cd terraform/environments/test && terraform plan -var=subscription_id="$AZURE_SUBSCRIPTION_ID" -var=client_id="$CLIENT_ID" -var=client_secret="$CLIENT_SECRET" -var=tenant_id="$TENANT_ID"'
         displayName: 'Terraform plan'
 
     

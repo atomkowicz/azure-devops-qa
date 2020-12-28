@@ -5,19 +5,22 @@ provider "azurerm" {
   client_secret   = "${var.client_secret}"
   features {}
 }
+
 terraform {
   backend "azurerm" {
-    storage_account_name = "finproj15630"
+    storage_account_name = "finproj30893"
     container_name       = "finprojcontainer"
     key                  = "terraform.tfstate"
     access_key           = "${var.access_key}"
   }
 }
+
 module "resource_group" {
   source               = "./../../modules/resource_group"
   resource_group       = "${var.resource_group}"
   location             = "${var.location}"
 }
+
 module "network" {
   source               = "./../../modules/network"
   address_space        = "${var.address_space}"

@@ -1,17 +1,7 @@
-# Azure subscription vars
-# subscription_id = $(SUBSCRIPTION_ID)
-#client_id = $(CLIENT_ID)
-# client_secret = $(CLIENT_SECRET)
-#tenant_id = $(TENANT_ID)
-
-#storage_account_name = $(STORAGE_ACCOUNT_NAME)
-#storage_container_name = $(STORAGE_CONTAINER_NAME)
-#access_key = $(STORAGE_ACCESS_KEY)
-
 # Resource Group/Location
-#location = $(REGION)
-#resource_group = $(RESOURCE_GROUP_NAME)
-application_type = "app-345342h7688" # This name has to be globally unique.
+location = "westeurope"
+resource_group =  "finproj"
+application_type = "finproj21952"
 
 # Network
 virtual_network_name = "finprojnetwork"
