@@ -54,7 +54,7 @@ stages:
 
 - stage: IntegrationTests
   jobs:
-  - job: Integration Tests
+  - job: IntegrationTests
     pool:
       name: Hosted Ubuntu 1604
     steps:
