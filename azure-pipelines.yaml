@@ -70,11 +70,11 @@ stages:
         script: |
           newman run -e test.postman_environment.json postman_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # - task: PublishTestResults@2
-    #   displayName: Publish Test Results
-    #   inputs:
-    #     testResultsFormat: 'JUnit'
-    #     testResultsFiles: '**/newman_test_*.xml'
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/newman_test_*.xml'
     
 # - stage: Build
 #   jobs:
