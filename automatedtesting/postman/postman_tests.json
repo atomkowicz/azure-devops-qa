@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "968b3a18-cc72-48a2-9b6b-e8619b4aaca8",
-		"name": "Starter APIs",
+		"name": "Postman tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -17,7 +17,7 @@
 							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"});",
 							"var json = pm.response.json();",
-							"pm.environment.set(\"id\", json.data.id);"
+							"pm.environment.set(\"testid\", json.data.id);"
 						],
 						"type": "text/javascript"
 					}
@@ -28,7 +28,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{name}}\",\n    \"salary\": \"{{salary}}\",\n    \"age\": \"{{age}}\"\n}",
+					"raw": "{\n    \"name\": \"John Doe\",\n    \"salary\": \"3000\",\n    \"age\": \"33\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
