@@ -5,10 +5,10 @@ name: Azure Pipelines
 variables:
   python.version: '3.7.6'
 stages:
-- stage: Build
+- stage: Provisioning
   displayName: Provisioning
   jobs:
-  - job: Build
+  - job: Provisioning
     displayName: Terraform Provisioning
     steps:
       - task: InstallSSHKey@0
@@ -52,6 +52,29 @@ stages:
           environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
+- stage: IntegrationTests
+  jobs:
+  - job: Integration Tests
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - task: CmdLine@2
+      displayName: Install Newman runner
+      inputs:
+        script: 'sudo npm install -g newman'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      displayName: Run integration tests
+      continueOnError: true
+      inputs:
+        script: |
+          newman run -e test.postman_environment.json postman_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/newman_test_*.xml'
     
 # - stage: Build
 #   jobs:
