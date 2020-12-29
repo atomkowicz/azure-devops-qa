@@ -8,7 +8,7 @@ stages:
 - stage: Build
   displayName: Provisioning
   jobs:
-  - job: Provisioning
+  - job: Build
     displayName: Terraform Provisioning
     steps:
       - task: InstallSSHKey@0
