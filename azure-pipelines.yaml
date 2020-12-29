@@ -5,56 +5,56 @@ name: Azure Pipelines
 variables:
   python.version: '3.7.6'
 stages:
+# - stage: Build
+#   displayName: Provisioning
+#   jobs:
+#   - job: Build
+#     displayName: Terraform Provisioning
+#     steps:
+#       - task: InstallSSHKey@0
+#         displayName: Install ssh keys
+#         inputs:
+#           knownHostsEntry: 'default'
+#           sshKeySecureFile: 'id_rsa'
+#       - task: TerraformInstaller@0
+#         displayName: 'Install terraform'
+#         inputs:
+#           terraformVersion: '0.12.3'
+#       - task: TerraformTaskV1@0
+#         displayName: Terraform Init
+#         inputs:
+#           provider: 'azurerm'
+#           command: 'init'
+#           commandOptions: |
+#             -backend-config "access_key=$(STORAGE_ACCESS_KEY)"
+#           backendServiceArm: 'http://finprojserviceprincipal'
+#           backendAzureRmResourceGroupName: 'finprojstorage'
+#           backendAzureRmStorageAccountName: 'finproj30893'
+#           backendAzureRmContainerName: 'finprojcontainer'
+#           backendAzureRmKey: terraform.tfstate'
+#           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#       - task: TerraformTaskV1@0
+#         displayName: Terraform Plan
+#         inputs:
+#           provider: 'azurerm'
+#           command: 'plan'
+#           commandOptions: |
+#             -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
+#           environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
+#           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#       - task: TerraformTaskV1@0
+#         displayName: Terraform Apply
+#         inputs:
+#           provider: 'azurerm'
+#           command: 'apply'
+#           commandOptions: |
+#             -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
+#           environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
+#           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
 - stage: Build
-  displayName: Provisioning
   jobs:
   - job: Build
-    displayName: Terraform Provisioning
-    steps:
-      - task: InstallSSHKey@0
-        displayName: Install ssh keys
-        inputs:
-          knownHostsEntry: 'default'
-          sshKeySecureFile: 'id_rsa'
-      - task: TerraformInstaller@0
-        displayName: 'Install terraform'
-        inputs:
-          terraformVersion: '0.12.3'
-      - task: TerraformTaskV1@0
-        displayName: Terraform Init
-        inputs:
-          provider: 'azurerm'
-          command: 'init'
-          commandOptions: |
-            -backend-config "access_key=$(STORAGE_ACCESS_KEY)"
-          backendServiceArm: 'http://finprojserviceprincipal'
-          backendAzureRmResourceGroupName: 'finprojstorage'
-          backendAzureRmStorageAccountName: 'finproj30893'
-          backendAzureRmContainerName: 'finprojcontainer'
-          backendAzureRmKey: terraform.tfstate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-      - task: TerraformTaskV1@0
-        displayName: Terraform Plan
-        inputs:
-          provider: 'azurerm'
-          command: 'plan'
-          commandOptions: |
-            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
-          environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-      - task: TerraformTaskV1@0
-        displayName: Terraform Apply
-        inputs:
-          provider: 'azurerm'
-          command: 'apply'
-          commandOptions: |
-            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
-          environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-
-- stage: IntegrationTests
-  jobs:
-  - job: IntegrationTests
     pool:
       name: Hosted Ubuntu 1604
     steps:
@@ -70,11 +70,11 @@ stages:
         script: |
           newman run -e test.postman_environment.json postman_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    - task: PublishTestResults@2
-      displayName: Publish Test Results
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/newman_test_*.xml'
+    # - task: PublishTestResults@2
+    #   displayName: Publish Test Results
+    #   inputs:
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: '**/newman_test_*.xml'
     
 # - stage: Build
 #   jobs:
