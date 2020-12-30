@@ -16,6 +16,11 @@ stages:
         inputs:
           knownHostsEntry: 'default'
           sshKeySecureFile: 'id_rsa'
+      - task: DownloadSecureFile@1
+        name: publicKey
+        displayName: 'Download public key'
+        inputs:
+          secureFile: 'id_rsa.pub'
       - task: TerraformInstaller@0
         displayName: 'Install terraform'
         inputs:
@@ -39,7 +44,7 @@ stages:
           provider: 'azurerm'
           command: 'plan'
           commandOptions: |
-            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
+            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID) -var "public_key=$(publicKey.secureFilePath)"
           environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
       - task: TerraformTaskV1@0
@@ -48,7 +53,7 @@ stages:
           provider: 'azurerm'
           command: 'apply'
           commandOptions: |
-            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)"
+            -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID) -var "public_key=$(publicKey.secureFilePath)"
           environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
