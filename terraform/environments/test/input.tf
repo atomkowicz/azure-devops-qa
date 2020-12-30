@@ -7,8 +7,8 @@ variable "tenant_id" {}
 # Resource Group/Location
 variable "location" {}
 variable "resource_group" {}
-variable "application_type" {} 
-variable "public_key" {} 
+variable "application_type" {}
+variable "public_key" {}
 
 # Network
 variable virtual_network_name {}
