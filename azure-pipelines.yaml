@@ -162,7 +162,8 @@ stages:
                 chromedriver --version
                 unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
                 sudo mkdir /var/logs
-                python3 login.py > selenium-ui-tests.log
+                echo $(date "+%Y-%m-%d %H:%M:%S") >> selenium-ui-tests.log
+                python3 login.py >> selenium-ui-tests.log
                 cat selenium-ui-tests.log
                 sudo mv selenium-ui-tests.log /var/logs
 
