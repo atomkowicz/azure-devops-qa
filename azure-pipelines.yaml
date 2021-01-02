@@ -128,7 +128,7 @@ stages:
                 unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
 
 - stage: PostDeployment
-  displayName: 'Post deployment'
+  displayName: 'Post-deployment'
   jobs:
   - deployment: UITests
     displayName: 'UI Tests'
@@ -148,6 +148,7 @@ stages:
               targetType: 'inline'
               script: |
                 sudo mkdir /var/logs
+                cd $(Pipeline.Workspace)/drop-selenium
                 echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
                 python3 login.py >> /var/logs/selenium-ui-tests.log
                 cat /var/logs/selenium-ui-tests.log
