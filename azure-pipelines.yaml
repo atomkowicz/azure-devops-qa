@@ -6,111 +6,100 @@ variables:
   python.version: '3.7.6'
 stages:
 - stage: Provisioning
-  displayName: Provisioning
+  displayName: 'Provisioning'
   jobs:
   - job: provisioning
-    displayName: Provisioning with Terraform
+    displayName: 'Provisioning with Terraform'
     steps:
       - task: InstallSSHKey@0
-        displayName: Install ssh keys
+        displayName: 'Install ssh keys'
         inputs:
           knownHostsEntry: 'default'
           sshKeySecureFile: 'id_rsa'
-      # - task: DownloadSecureFile@1
-      #   name: publicKey
-      #   displayName: 'Download public key'
-      #   inputs:
-      #     secureFile: 'id_rsa.pub'
       - task: TerraformInstaller@0
         displayName: 'Install terraform'
         inputs:
           terraformVersion: '0.12.3'
       - task: TerraformTaskV1@0
-        displayName: Terraform Init
+        displayName: 'Terraform Init'
         inputs:
           provider: 'azurerm'
           command: 'init'
           commandOptions: |
             -backend-config "access_key=$(STORAGE_ACCESS_KEY)"
-          backendServiceArm: 'http://finprojserviceprincipal'
+          backendServiceArm: 'finprojserviceprincipal'
           backendAzureRmResourceGroupName: 'finprojstorage'
           backendAzureRmStorageAccountName: 'finproj30893'
           backendAzureRmContainerName: 'finprojcontainer'
           backendAzureRmKey: terraform.tfstate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
       - task: TerraformTaskV1@0
-        displayName: Terraform Plan
+        displayName: 'Terraform Plan'
         inputs:
           provider: 'azurerm'
           command: 'plan'
           commandOptions: |
             -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)" -var "public_key=$(PUBLIC_KEY)"
-          environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
+          environmentServiceNameAzureRM: 'finprojserviceprincipal'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
       - task: TerraformTaskV1@0
-        displayName: Terraform Apply
+        displayName: 'Terraform Apply'
         inputs:
           provider: 'azurerm'
           command: 'apply'
           commandOptions: |
             -var "subscription_id=$(AZURE_SUBSCRIPTION_ID)" -var "client_id=$(CLIENT_ID)" -var "client_secret=$(CLIENT_SECRET)" -var "tenant_id=$(TENANT_ID)" -var "public_key=$(PUBLIC_KEY)"
-          environmentServiceNameAzureRM: 'http://finprojserviceprincipal'
+          environmentServiceNameAzureRM: 'finprojserviceprincipal'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     
 - stage: Build
   jobs:
   - job: Build
-    displayName: Build Selenium Tests
+    displayName: 'Build'
     pool:
       name: Hosted Ubuntu 1604
     steps:
-    # Needed for Terraform VM deployment
-    # - task: InstallSSHKey@0
-    #   inputs:
-    #     knownHostsEntry: 'KNOWN_HOSTS_STRING'
-    #     sshPublicKey: 'PUBLIC_KEY'
-    #     sshKeySecureFile: 'id_rsa'
-    # - task: ArchiveFiles@2
-    #   displayName: 'Archive FakeRestAPI'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-    #   displayName: 'Upload Package'
-    #   artifact: drop-fakerestapi
     - task: ArchiveFiles@2
-      displayName: 'Archive test files'
+      displayName: 'Archive FakeRestAPI'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/drop-fakerestapi-$(Build.BuildId).zip'
+    - publish: $(Build.ArtifactStagingDirectory)
+      displayName: 'Upload FakeRestAPI'
+      artifact: drop-fakerestapi
+    - task: ArchiveFiles@2
+      displayName: 'Archive Selenium tests'
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
-      displayName: 'Upload Package'
+      displayName: 'Upload Selenium Tests'
       artifact: drop-selenium
 
 - stage: Deploy
-  displayName: Deploy
+  displayName: 'Deploy'
   jobs:
-  # - deployment: VMDeploy
-  #   pool:
-  #     vmImage: 'Ubuntu-16.04'
-  #   environment: 'finproj-test'
-  #   strategy:
-  #     runOnce:
-  #       deploy:
-  #         steps:
-  #         - task: AzureWebApp@1
-  #           displayName: 'Deploy Azure Web App'
-  #           inputs:
-  #             azureSubscription: ''
-  #             appName: 'FakeRestAPI'
-  #             appType: webApp
-  #             package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+  - job: DeployWebApp
+    displayName: 'Deploy FakerRestApi to AppService'
+    steps:
+    - download: current
+      displayName: 'Download FakerRestApi'
+      artifact: drop-fakerestapi
+    - task: AzureRmWebAppDeployment@4
+      displayName: 'Deploy FakerRestApi to AppService'
+      inputs:
+        azureSubscription: 'finprojserviceprincipal'
+        WebAppName: 'finproj21952-AppService'
+        Package:  $(Pipeline.Workspace)/drop-fakerestapi/drop-fakerestapi-$(Build.BuildId).zip
+        # enableCustomDeployment: true
+        # DeploymentType: zipDeploy
+        # TakeAppOfflineFlag: false
   - deployment: VMDeploy
-    displayName: 'VM deploy'
+    displayName: 'Deploy Selenium Tests to VM'
     environment:
       name: 'test'
       resourceType: VirtualMachine
@@ -119,7 +108,7 @@ stages:
         deploy:
           steps:
           - download: current
-            displayName: 'Download Selenium'
+            displayName: 'Download Selenium Tests'
             artifact: drop-selenium
           - task: Bash@3
             displayName: 'Install dependencies'
@@ -135,12 +124,14 @@ stages:
                 sudo apt-get install -y chromium-chromedriver
                 pip3 install selenium
                 export PATH=$PATH:/usr/lib/chromium-browser/
+                cd $(Pipeline.Workspace)/drop-selenium
+                unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
 
-- stage: Tests
-  displayName: Tests
+- stage: PostDeployment
+  displayName: 'Post deployment'
   jobs:
-  - deployment: Tests
-    displayName: Tests
+  - deployment: UITests
+    displayName: 'UI Tests'
     environment:
       name:  'test'
       resourceType: VirtualMachine
@@ -152,47 +143,41 @@ stages:
             displayName: 'Download Selenium'
             artifact: drop-selenium
           - task: Bash@3
-            displayName: UI Tests
+            displayName: 'UI Tests'
             inputs:
               targetType: 'inline'
               script: |
-                cd $(Pipeline.Workspace)/drop-selenium
-                pwd
-                chromium-browser -version
-                chromedriver --version
-                unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
                 sudo mkdir /var/logs
-                echo $(date "+%Y-%m-%d %H:%M:%S") >> selenium-ui-tests.log
-                python3 login.py >> selenium-ui-tests.log
-                cat selenium-ui-tests.log
-                sudo mv selenium-ui-tests.log /var/logs
+                echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
+                python3 login.py >> /var/logs/selenium-ui-tests.log
+                cat /var/logs/selenium-ui-tests.log
 
-#   - job: IntegrationTests
-#     displayName: Integration Tests
-#     pool:
-#       name: Hosted Ubuntu 1604
-#     steps:
-#     - task: CmdLine@2
-#       displayName: Install Newman runner
-#       inputs:
-#         script: 'sudo npm install -g newman'
-#         workingDirectory: $(System.DefaultWorkingDirectory)
-#     - task: CmdLine@2
-#       displayName: Run data validation tests
-#       continueOnError: true
-#       inputs:
-#         script: |
-#           newman run -e test.postman_environment.json data_validation_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
-#         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-#     - task: CmdLine@2
-#       displayName: Run regression tests
-#       continueOnError: true
-#       inputs:
-#         script: |
-#           newman run -e test.postman_environment.json regression_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
-#         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-#     - task: PublishTestResults@2
-#       displayName: Publish Test Results
-#       inputs:
-#         testResultsFormat: 'JUnit'
-#         testResultsFiles: '**/newman_test_*.xml'
+  - job: IntegrationTests
+    displayName: 'Integration Tests'
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - task: CmdLine@2
+      displayName: 'Install Newman runner'
+      inputs:
+        script: 'sudo npm install -g newman'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      displayName: 'Run data validation tests'
+      continueOnError: true
+      inputs:
+        script: |
+          newman run -e test.postman_environment.json data_validation_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    - task: CmdLine@2
+      displayName: 'Run regression tests'
+      continueOnError: true
+      inputs:
+        script: |
+          newman run -e test.postman_environment.json regression_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/newman_test_*.xml'
