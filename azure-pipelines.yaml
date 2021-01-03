@@ -190,6 +190,7 @@ stages:
     - task: JMeterInstaller@0
       inputs:
         jmeterVersion: '5.2.1'
+        
     # - task: Bash@3
     #   displayName: Endurance Tests
     #   inputs:
