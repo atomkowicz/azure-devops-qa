@@ -147,7 +147,7 @@
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">C:\Users\AgnieszkaTomkowicz\Repos\Training\azure-devops-qa\automatedtesting\jmeter\stress_tests_result.csv</stringProp>
+          <stringProp name="filename">stress_tests_result.csv</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
