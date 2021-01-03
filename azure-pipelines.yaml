@@ -196,7 +196,7 @@ stages:
         targetType: 'inline'
         script: |
           mkdir -p endurance-report
-          jmeter -n -t endurance_test.jmx -l endurace_test_results.csv -e -o endurance-report
+          jmeter -n -t endurance_test.jmx -l endurace_tests_results.csv -e -o endurance-report
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
     # - task: Bash@3
     #   displayName: Stress Tests
