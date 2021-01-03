@@ -62,7 +62,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/drop-fakerestapi-$(Build.BuildId).zip'
@@ -98,34 +98,6 @@ stages:
         enableCustomDeployment: true
         DeploymentType: zipDeploy
         TakeAppOfflineFlag: false
-  - deployment: VMDeploy
-    displayName: 'Deploy Selenium Tests to VM'
-    environment:
-      name: 'test'
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            displayName: 'Download Selenium Tests'
-            artifact: drop-selenium
-          - task: Bash@3
-            displayName: 'Install dependencies'
-            inputs:
-              targetType: 'inline'
-              script: |
-                #! /bin/bash
-                
-                sudo apt-get upgrade -y
-                sudo apt-get install python3-pip -y
-                sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-chromedriver
-                pip3 install selenium
-                export PATH=$PATH:/usr/lib/chromium-browser/
-                cd $(Pipeline.Workspace)/drop-selenium
-                unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
 
 - stage: PostDeployment
   displayName: 'Post-deployment'
@@ -143,14 +115,30 @@ stages:
             displayName: 'Download Selenium'
             artifact: drop-selenium
           - task: Bash@3
-            displayName: 'UI Tests'
+            displayName: 'Install Selenium'
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-chromedriver
+                pip3 install selenium
+                export PATH=$PATH:/usr/lib/chromium-browser/
+                cd $(Pipeline.Workspace)/drop-selenium
+                unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
+          - task: Bash@3
+            displayName: 'Run Selenium Tests'
             inputs:
               targetType: 'inline'
               script: |
                 sudo mkdir /var/logs
                 cd $(Pipeline.Workspace)/drop-selenium
                 echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
-                python3 login.py >> /var/logs/selenium-ui-tests.log
+                python3 login.py | tee /var/logs/selenium-ui-tests.log
 
   - job: IntegrationTests
     displayName: 'Integration Tests'
@@ -181,3 +169,36 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/newman_test_*.xml'
+
+  - job: LoadTests
+    displayName: Load Tests
+    pool:
+      name: Hosted Ubuntu 1604
+    steps: 
+    - task: JMeterInstaller@0
+      inputs:
+        jmeterVersion: '5.2.1'
+    - task: Bash@3
+      displayName: Endurance Tests
+      inputs:
+        targetType: 'inline'
+        script: |
+          mkdir -p endurance-report
+          jmeter -n -t endurance_test.jmx -l endurance_tests_results.csv -f -e -o endurance-report
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+    - task: Bash@3
+      displayName: Stress Tests
+      inputs:
+        targetType: 'inline'
+        script: |
+          mkdir -p stress-report
+          jmeter -n -t stress_test.jmx -l stress_tests_results.csv -f -e -o stress-report
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/endurance-report'
+        ArtifactName: 'endurance-test-result'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/stress-report'
+        ArtifactName: 'stress-test-result'
