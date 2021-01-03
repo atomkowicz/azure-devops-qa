@@ -190,23 +190,24 @@ stages:
     - task: JMeterInstaller@0
       inputs:
         jmeterVersion: '5.2.1'
-    - task: Bash@3
-      displayName: Endurance Tests
-      inputs:
-        targetType: 'inline'
-        script: 'jmeter -n -t automatedtesting/jmeter/endurance_tests.jmx -l automatedtesting/jmeter/endurace_test_results.csv -e -o -f automatedtesting/jmeter/EndruranceTestReport'
-    - task: Bash@3
-      displayName: Stress Tests
-      inputs:
-        targetType: 'inline'
-        script: 'jmeter -n -t automatedtesting/jmeter/StressTestSuite.jmx -l automatedtesting/jmeter/stress_tests_results.csv -e -o -f automatedtesting/jmeter/StressTestReport'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: 'automatedtesting/jmeter/EndruranceTestReport'
-        ArtifactName: 'jmeter-endurance-test-result'
-        publishLocation: 'Container'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: 'automatedtesting/jmeter/StressTestReport'
-        ArtifactName: 'jmeter-stress-test-result'
-        publishLocation: 'Container'
+        
+    # - task: Bash@3
+    #   displayName: Endurance Tests
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: 'jmeter -n -t automatedtesting/jmeter/endurance_tests.jmx -l automatedtesting/jmeter/endurace_test_results.csv -e -o -f automatedtesting/jmeter/EndruranceTestReport'
+    # - task: Bash@3
+    #   displayName: Stress Tests
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: 'jmeter -n -t automatedtesting/jmeter/StressTestSuite.jmx -l automatedtesting/jmeter/stress_tests_results.csv -e -o -f automatedtesting/jmeter/StressTestReport'
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     PathtoPublish: 'automatedtesting/jmeter/EndruranceTestReport'
+    #     ArtifactName: 'jmeter-endurance-test-result'
+    #     publishLocation: 'Container'
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     PathtoPublish: 'automatedtesting/jmeter/StressTestReport'
+    #     ArtifactName: 'jmeter-stress-test-result'
+    #     publishLocation: 'Container'
