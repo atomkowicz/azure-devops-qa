@@ -95,9 +95,9 @@ stages:
         azureSubscription: 'finprojserviceprincipal'
         WebAppName: 'finproj21952-AppService'
         Package:  $(Pipeline.Workspace)/drop-fakerestapi/drop-fakerestapi-$(Build.BuildId).zip
-        # enableCustomDeployment: true
-        # DeploymentType: zipDeploy
-        # TakeAppOfflineFlag: false
+        enableCustomDeployment: true
+        DeploymentType: zipDeploy
+        TakeAppOfflineFlag: false
   - deployment: VMDeploy
     displayName: 'Deploy Selenium Tests to VM'
     environment:
