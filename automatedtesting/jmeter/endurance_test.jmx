@@ -199,7 +199,7 @@
       </ConfigTestElement>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Author Data Set Config" enabled="true">
-        <stringProp name="filename">C:/Users/AgnieszkaTomkowicz/Repos/Training/azure-devops-qa/automatedtesting/jmeter/author_dataset.csv</stringProp>
+        <stringProp name="filename">author_dataset.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">Author_ID,Author_IDBook,Author_FirstName,Author_LastName</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
