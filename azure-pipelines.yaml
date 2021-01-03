@@ -194,7 +194,7 @@ stages:
       displayName: Endurance Tests
       inputs:
         targetType: 'inline'
-        script: 'jmeter -n -t $(Build.SourcesDirectory)/endurance_tests.jmx -l $(Build.SourcesDirectory)/endurace_test_results.csv -e -o $(Build.SourcesDirectory)/EndruranceTestReport'
+        script: 'jmeter -n -t endurance_test.jmx -l endurace_test_results.csv -e -o $(Build.SourcesDirectory)/EndruranceTestReport'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
     # - task: Bash@3
     #   displayName: Stress Tests
