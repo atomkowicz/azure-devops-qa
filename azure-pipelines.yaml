@@ -98,6 +98,8 @@ stages:
 #         enableCustomDeployment: true
 #         DeploymentType: zipDeploy
 #         TakeAppOfflineFlag: false
+
+
 #   - deployment: VMDeploy
 #     displayName: 'Deploy Selenium Tests to VM'
 #     environment:
@@ -110,47 +112,63 @@ stages:
 #           - download: current
 #             displayName: 'Download Selenium Tests'
 #             artifact: drop-selenium
-#           - task: Bash@3
-#             displayName: 'Install dependencies'
-#             inputs:
-#               targetType: 'inline'
-#               script: |
-#                 #! /bin/bash
+          # - task: Bash@3
+          #   displayName: 'Install dependencies'
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       #! /bin/bash
                 
-#                 sudo apt-get upgrade -y
-#                 sudo apt-get install python3-pip -y
-#                 sudo apt-get install unzip -y
-#                 sudo apt-get install -y chromium-browser
-#                 sudo apt-get install -y chromium-chromedriver
-#                 pip3 install selenium
-#                 export PATH=$PATH:/usr/lib/chromium-browser/
-#                 cd $(Pipeline.Workspace)/drop-selenium
-#                 unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
+          #       sudo apt-get upgrade -y
+          #       sudo apt-get install python3-pip -y
+          #       sudo apt-get install unzip -y
+          #       sudo apt-get install -y chromium-browser
+          #       sudo apt-get install -y chromium-chromedriver
+          #       pip3 install selenium
+          #       export PATH=$PATH:/usr/lib/chromium-browser/
+          #       cd $(Pipeline.Workspace)/drop-selenium
+          #       unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
 
 - stage: PostDeployment
   displayName: 'Post-deployment'
   jobs:
-  # - deployment: UITests
-  #   displayName: 'UI Tests'
-  #   environment:
-  #     name:  'test'
-  #     resourceType: VirtualMachine
-  #   strategy:
-  #     runOnce:
-  #       deploy:
-  #         steps:
-  #         - download: current
-  #           displayName: 'Download Selenium'
-  #           artifact: drop-selenium
-  #         - task: Bash@3
-  #           displayName: 'UI Tests'
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               sudo mkdir /var/logs
-  #               cd $(Pipeline.Workspace)/drop-selenium
-  #               echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
-  #               python3 login.py >> /var/logs/selenium-ui-tests.log
+  - deployment: UITests
+    displayName: 'UI Tests'
+    environment:
+      name:  'test'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            displayName: 'Download Selenium'
+            artifact: drop-selenium
+          - task: Bash@3
+            displayName: 'Install Selenium'
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-chromedriver
+                pip3 install selenium
+                export PATH=$PATH:/usr/lib/chromium-browser/
+                cd $(Pipeline.Workspace)/drop-selenium
+                unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-selenium-tests -d .
+          - task: Bash@3
+            displayName: 'Run Selenium Tests'
+            inputs:
+              targetType: 'inline'
+              script: |
+                sudo mkdir /var/logs
+                cd $(Pipeline.Workspace)/drop-selenium
+                echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
+                python3 login.py >> /var/logs/selenium-ui-tests.log
 
   # - job: IntegrationTests
   #   displayName: 'Integration Tests'
