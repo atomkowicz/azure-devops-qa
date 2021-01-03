@@ -194,17 +194,19 @@ stages:
       displayName: Endurance Tests
       inputs:
         targetType: 'inline'
-        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/endurance_tests.jmx -l $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/endurace_test_results.csv -e -o$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EndruranceTestReport'
-    - task: Bash@3
-      displayName: Stress Tests
-      inputs:
-        targetType: 'inline'
-        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestSuite.jmx -l $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/stress_tests_results.csv -e -o $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EndruranceTestReport'
-        ArtifactName: 'jmeter-endurance-test-result'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
-        ArtifactName: 'jmeter-stress-test-result'
+        script: 'jmeter -n -t $(Build.SourcesDirectory)/endurance_tests.jmx -l $(Build.SourcesDirectory)/endurace_test_results.csv -e -o $(Build.SourcesDirectory)/EndruranceTestReport'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+    # - task: Bash@3
+    #   displayName: Stress Tests
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestSuite.jmx -l $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/stress_tests_results.csv -e -o $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
+    #     workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EndruranceTestReport'
+    #     ArtifactName: 'jmeter-endurance-test-result'
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
+    #     ArtifactName: 'jmeter-stress-test-result'
