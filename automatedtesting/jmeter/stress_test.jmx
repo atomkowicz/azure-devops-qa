@@ -147,7 +147,7 @@
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">stress_tests_result.csv</stringProp>
+          <stringProp name="filename">stress_tests_results.csv</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>

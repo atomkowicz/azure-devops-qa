@@ -198,17 +198,19 @@ stages:
           mkdir -p endurance-report
           jmeter -n -t endurance_test.jmx -l endurance_tests_results.csv -e -o endurance-report
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
-    # - task: Bash@3
-    #   displayName: Stress Tests
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestSuite.jmx -l $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/stress_tests_results.csv -e -o $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # - task: PublishBuildArtifacts@1
-    #   inputs:
-    #     PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EndruranceTestReport'
-    #     ArtifactName: 'jmeter-endurance-test-result'
-    # - task: PublishBuildArtifacts@1
-    #   inputs:
-    #     PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTestReport'
-    #     ArtifactName: 'jmeter-stress-test-result'
+    - task: Bash@3
+      displayName: Stress Tests
+      inputs:
+        targetType: 'inline'
+        script: |
+          mkdir -p stress-report
+          jmeter -n -t stress_test.jmx -l stress_tests_results.csv -e -o stress-report
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/endurance-report'
+        ArtifactName: 'endurance-test-result'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/stress-report'
+        ArtifactName: 'stress-test-result'
