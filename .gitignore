@@ -7,3 +7,4 @@ screenshots
 terraform/environments/test/.terraform
 terraform/environments/test/solution.plan
 automatedtesting/selenium/debug.log
+jmeter.log
