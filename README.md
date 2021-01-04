@@ -1,6 +1,20 @@
 # Ensuring Quality Releases - Project Overview
 
-In this project, you'll develop and demonstrate your skills in using Microsoft Azure, to create disposable test environments and run a variety of automated tests with the click of a button. Additionally, you'll monitor and provide insight into your application's behavior, and determine root causes by querying the application’s custom log files.
+Using Microsoft Azure, create disposable test environments and run a variety of automated tests with the click of a button. Additionally, monitor and provide insight into your application's behavior, and determine root causes by querying the application’s custom log files.
+Add automated testing tasks during deployment of an application to a CI/CD pipeline in Azure DevOps to improve feature quality by decreasing % of failed tests.
+## Environment Creation & Deployment
+Utilize Terraform to apply Infrastructure as Code (IaC) concepts to create different environment tiers that enable effective testing of code as it reaches the different phases of the release management process.
+
+## Automated Testing
+Runs a load test suite post-deployment using JMeter to evaluate both a web application and web service’s performance (how well application performs under stress) in order to provide resource requirements, benchmarking metrics, and meet SLA (service level agreement) objectives.
+
+Runs functional test suites post-application-deployment using Selenium to evaluate the quality of a web application in order to identify, reduce, and prevent defects before a production release.
+
+Runs API-integration tests post-application-deployment using Postman to evaluate the quality of a web service in order to reduce defects before a production release.
+
+## Monitoring & Observability
+Azure Monitor to identify and mitigate operational issues by using thoughtfully constructed alerts from a mixture of virtual machines and application services.
+Configure Azure Log Analytics to consume and aggregate custom application events in order to determine and address root causes of operational issues.
 
 ## Project Tools and Environment
 
