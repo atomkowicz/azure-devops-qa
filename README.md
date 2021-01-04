@@ -195,4 +195,4 @@ Please complete the following steps for this project:
 ![azure monitor alert](screenshots/appservice_metrics.jpg)
 ![azure monitor alert](screenshots/appservice_metrics2.jpg)
 ### Log analytics queries
-![azure monitor alert](screenshots/log_query.jpg)
+![azure monitor alert](screenshots/selenium-logs.jpg)
