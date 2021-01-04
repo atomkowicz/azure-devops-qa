@@ -163,3 +163,36 @@ Please complete the following steps for this project:
 - The time the alert triggers and the time the Performance test is executed ought to be very close.
 
 7. Direct the output of the Selenium Test Suite to a log file, and execute the - Test Suite. Configure custom logging in Azure Monitor to ingest this log file.This may be done non-CI/CD.
+
+
+### Log output of Terraform when executed by the CI/CD pipeline
+![log output of Terraform](screenshots/pipeline_terraform.jpg)
+
+### Deployed fakerestapi
+![deployed fakerestapi](screenshots/running_fakerestapi.jpg)
+
+### Successful execution of the pipeline build results page
+![pipeline build results page](screenshots/pipeline_build_result.jpg)
+
+### Log output of JMeter when executed by the CI/CD pipeline
+![jmeter endurance test](screenshots/endurance_test.jpg)
+
+![jmeter stress test](screenshots/stress_test.jpg)
+
+### Execution of the UI (Selenium) test suite by the CI/CD pipeline
+![selenium test](screenshots/selenium_test.jpg)
+
+### Execution of the Integration test suite by the CI/CD pipeline
+![newman regression test](screenshots/regression_test.jpg)
+![newman data validation test](screenshots/data_validation_test.jpg)
+![newman test runs](screenshots/integration_test_runs.jpg)
+![newman test summary](screenshots/integration_test_summary.jpg)
+
+### Email received when the 404 alert is triggered
+![azure monitor alert](screenshots/email_alert.jpg)
+
+### Appservice metrics
+![azure monitor alert](screenshots/appservice_metrics.jpg)
+![azure monitor alert](screenshots/appservice_metrics2.jpg)
+### Log analytics queries
+![azure monitor alert](screenshots/log_query.jpg)
