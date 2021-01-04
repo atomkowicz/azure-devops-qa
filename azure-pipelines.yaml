@@ -137,9 +137,9 @@ stages:
               script: |
                 sudo mkdir /var/logs
                 cd $(Pipeline.Workspace)/drop-selenium
-                echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
-                python3 login.py >> /var/logs/selenium-ui-tests.log
-                cat /var/logs/selenium-ui-tests.log
+                echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-test.log
+                python3 login.py >> /var/logs/selenium-test.log
+                cat /var/logs/selenium-test.log
 
   - job: IntegrationTests
     displayName: 'Integration Tests'
@@ -156,14 +156,14 @@ stages:
       continueOnError: true
       inputs:
         script: |
-          newman run -e test.postman_environment.json data_validation_tests.json --delay-request 5000 --bail --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
+          newman run -e test.postman_environment.json data_validation_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     - task: CmdLine@2
       displayName: 'Run regression tests'
       continueOnError: true
       inputs:
         script: |
-          newman run -e test.postman_environment.json regression_tests.json --delay-request 5000 --bail --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
+          newman run -e test.postman_environment.json regression_tests.json --reporters cli,junit --reporter-junit-export $(Build.SourcesDirectory)/automatedtesting/postman/newman_test_result.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
