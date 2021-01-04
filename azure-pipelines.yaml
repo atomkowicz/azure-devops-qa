@@ -138,7 +138,8 @@ stages:
                 sudo mkdir /var/logs
                 cd $(Pipeline.Workspace)/drop-selenium
                 echo $(date "+%Y-%m-%d %H:%M:%S") >> /var/logs/selenium-ui-tests.log
-                python3 login.py | tee /var/logs/selenium-ui-tests.log
+                python3 login.py >> /var/logs/selenium-ui-tests.log
+                cat /var/logs/selenium-ui-tests.log
 
   - job: IntegrationTests
     displayName: 'Integration Tests'
